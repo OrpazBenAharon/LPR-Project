@@ -1,0 +1,17 @@
+# Python cache files
+__pycache__/
+
+# Folders
+data/
+data_unique/
+data_test/
+plots/
+mlruns/
+results/
+
+# Ignore model checkpoints
+models/*.h5
+models/*.pth
+
+# VSCode settings folder
+.vscode/
