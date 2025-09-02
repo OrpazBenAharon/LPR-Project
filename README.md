@@ -16,6 +16,11 @@ Concept: Restoring a license plate from a synthetically distorted image that sim
 - **Diverse Model Benchmark:** Systematically compares leading deep learning paradigms (CNNs, Transformers, GANs, Diffusion).
 - **Novel Evaluation Metrics:** Introduces Boundary-AUC and a Reliability Score (F) to precisely quantify recoverability limits.
 
+<img width="953" height="110" alt="image" src="https://github.com/user-attachments/assets/70f1fe77-04e2-4ae0-a27b-c5a161286c20" />
+<img width="590" height="491" alt="image" src="https://github.com/user-attachments/assets/028ee74d-980f-4553-bbcd-5a30e6c9dd5a" />
+<img width="815" height="812" alt="image" src="https://github.com/user-attachments/assets/de009681-ec7b-4513-aaea-abc7ded9d5fe" />
+
+
 
 ## Models Investigated
 We evaluated five distinct architectures representing several leading deep learning paradigms (CNNs, Transformers, GANs, and Diffusion Models) for image restoration.
