@@ -16,16 +16,14 @@ Concept: Restoring a license plate from a synthetically distorted image that sim
 - **Diverse Model Benchmark:** Systematically compares leading deep learning paradigms (CNNs, Transformers, GANs, Diffusion).
 - **Novel Evaluation Metrics:** Introduces Boundary-AUC and a Reliability Score (F) to precisely quantify recoverability limits.
 
-<img width="953" height="110" alt="image" src="https://github.com/user-attachments/assets/70f1fe77-04e2-4ae0-a27b-c5a161286c20" />
-<img width="590" height="491" alt="image" src="https://github.com/user-attachments/assets/028ee74d-980f-4553-bbcd-5a30e6c9dd5a" />
-<img width="815" height="812" alt="image" src="https://github.com/user-attachments/assets/de009681-ec7b-4513-aaea-abc7ded9d5fe" />
-
+<img width="953" height="110" alt="image" src="https://github.com/user-attachments/assets/cce3f683-348b-4ed2-b3d6-1ce0f4f041e5" />
+<img width="937" height="477" alt="image" src="https://github.com/user-attachments/assets/34eae85b-ccab-4944-8191-0f297bb89f1b" />
 
 
 ## Models Investigated
 We evaluated five distinct architectures representing several leading deep learning paradigms (CNNs, Transformers, GANs, and Diffusion Models) for image restoration.
 
-| Category | Model     | Description                       |
+| **Category** | **Model**    | **Description**                      |
 | :-------- | :------- | :-------------------------------- |
 | Discriminative      | U-Net | A robust CNN-based encoder-decoder, serving as our baseline. |
 |  | U-Net Conditional| An enhanced U-Net using FiLM layers to condition features on input distortion. |
@@ -33,11 +31,14 @@ We evaluated five distinct architectures representing several leading deep learn
 | Generative | Pix2Pix GAN | A conditional GAN that learns an image-to-image mapping adversarially. |
 |  | Diffusion-SR3 | A denoising diffusion probabilistic model adapted for conditional restoration.|
 
+<img width="604" height="510" alt="image" src="https://github.com/user-attachments/assets/f9a65f7a-489b-4c2b-8bf3-e7ef62391ff9" />
 
 ## Key Results
 - **Discriminative Models Outperform Generative Ones:** Discriminative architectures (e.g., Restormer) consistently delivered superior restoration quality, while generative models often struggled with severe distortions and "hallucinated" incorrect digits.
 - **A "Maximal Recoverability Boundary" Was Identified:** We found that ~93.4% of the angle space is recoverable. Beyond ~80° on both axes, information is permanently lost. Furthermore, yaw rotation (α angle) is consistently harder to restore than pitch rotation (β angle).
 - **PSNR is a Reliable Proxy for OCR Accuracy:** PSNR demonstrates a strong linear correlation (R^2~0.98) with final OCR accuracy, making it a robust metric for guiding the training process.
+<img width="1218" height="525" alt="image" src="https://github.com/user-attachments/assets/d9e11cfe-ffb5-4487-bdaf-3a9e083d95b4" />
+
 
 ## Getting Started
 Prerequisites
