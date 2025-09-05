@@ -1,43 +1,57 @@
 
 # Generative Image Models for Enhancing License Plate Images Captured at Extreme Viewing Angles
 
-This repository contains the official code for a final year project for the Department of Electrical Engineering at  Afeka - The Academic College of Engineering in Tel Aviv, focused on reconstructing distorted license plate images using deep learning models.
-
-
-
 ## Overview
 License plate (LP) images from non-dedicated cameras (e.g., security, ATM) often suffer from extreme geometric distortion and noise, rendering them unreadable and, beyond a certain point, irrecoverable. This project pinpoints the critical threshold where this information is permanently lost. To achieve this, we developed an end-to-end framework to synthetically generate distorted data and benchmark a diverse set of deep learning models (discriminative and generative). The result is a clear 'recoverability boundary' that defines the maximum viewing angles for successful image restoration.
 
 Concept: Restoring a license plate from a synthetically distorted image that simulates an extreme angle capture.
-## Key Features
+## Synthetic Data with Realistic Distortions
 
-- **Synthetic Data with Realistic Distortions:** Creates clean/distorted image pairs by applying 3D perspective warps and a multi-stage noise simulation pipeline.
-- **Advanced Angle Sampling:** Uses Sobol sequences to ensure dense and uniform coverage of extreme viewing angles.
-- **Diverse Model Benchmark:** Systematically compares leading deep learning paradigms (CNNs, Transformers, GANs, Diffusion).
-- **Novel Evaluation Metrics:** Introduces Boundary-AUC and a Reliability Score (F) to precisely quantify recoverability limits.
+The pipeline generates clean license plate images, applies 3D perspective warping to simulate different viewing angles, and adds realistic noise effects (blur, compression, brightness/contrast changes, color shifts, edge artifacts, and Gaussian noise). The images are then realigned, cropped, and downsampled.
 
 <img width="953" height="110" alt="image" src="https://github.com/user-attachments/assets/cce3f683-348b-4ed2-b3d6-1ce0f4f041e5" />
-<img width="937" height="477" alt="image" src="https://github.com/user-attachments/assets/34eae85b-ccab-4944-8191-0f297bb89f1b" />
+
+
+## Advanced Angle Sampling
+
+We created a custom probability density function (PDF) with emphasis on extreme angles and applied a 3D Sobol sequence to generate evenly distributed samples. The Sobol cube was divided into four regions and then mapped to the angle space according to the PDF.
+
+
+
+<img width="2902" height="814" alt="image" src="https://github.com/user-attachments/assets/3b2407ec-5d24-4ff5-9fd0-b464a24ff991" />
 
 
 ## Models Investigated
 We evaluated five distinct architectures representing several leading deep learning paradigms (CNNs, Transformers, GANs, and Diffusion Models) for image restoration.
 
-| **Category** | **Model**    | **Description**                      |
-| :-------- | :------- | :-------------------------------- |
-| Discriminative      | U-Net | A robust CNN-based encoder-decoder, serving as our baseline. |
-|  | U-Net Conditional| An enhanced U-Net using FiLM layers to condition features on input distortion. |
-|  | Restormer | An efficient Transformer-based model for high-resolution image restoration|
-| Generative | Pix2Pix GAN | A conditional GAN that learns an image-to-image mapping adversarially. |
-|  | Diffusion-SR3 | A denoising diffusion probabilistic model adapted for conditional restoration.|
+| **Category** | **Model**    | **Key Adaptations for This Project** |**Orignal paper**|
+| :-------- | :------- | :-------------------------------- |:-------------------------------- |
+| Discriminative      | U-Net | Adapted from its original segmentation purpose for image-to-image regression. We modified it to handle 3-channel RGB images and incorporated batch normalization for stable training.| [U-Net](https://arxiv.org/abs/1505.04597)|
+|  | U-Net Conditional| Extends the U-Net with FiLM (Feature-wise Linear Modulation) layers. A separate encoder processes the distorted input into a latent vector, which FiLM then uses to generate adaptive channel-wise scale and shift parameters at each stage of the network. This allows the model to dynamically adjust its features to suppress artifacts specific to each image. |[FiLM](https://arxiv.org/abs/1709.07871)|
+|  | Restormer | The original high-resolution Transformer architecture was applied directly. In our implementation, the model is trained to predict the residual (the difference between the clean and distorted images), which is then added back to the input to produce the final restored image|[Restormer](https://arxiv.org/abs/2111.09881)|
+| Generative | Pix2Pix GAN | We followed the original framework, pairing a U-Net-based generator with a PatchGAN discriminator. The discriminator evaluates local image patches to enforce high-frequency realism, and the training objective combines an adversarial loss with an L1 reconstruction loss for pixel-level accuracy. |[Pix2Pix GAN](https://arxiv.org/abs/1611.07004)|
+|  | Diffusion-SR3 | Adapted from super-resolution to restoration by conditioning the reverse diffusion process on our distorted image (concatenated as a 6-channel input). For improved stability, we implemented v-prediction instead of the standard ε-prediction and used DDIM for faster, deterministic sampling.|[Diffusion-SR3](https://arxiv.org/abs/2104.07636)|
 
 <img width="604" height="510" alt="image" src="https://github.com/user-attachments/assets/f9a65f7a-489b-4c2b-8bf3-e7ef62391ff9" />
 
-## Key Results
-- **Discriminative Models Outperform Generative Ones:** Discriminative architectures (e.g., Restormer) consistently delivered superior restoration quality, while generative models often struggled with severe distortions and "hallucinated" incorrect digits.
-- **A "Maximal Recoverability Boundary" Was Identified:** We found that ~93.4% of the angle space is recoverable. Beyond ~80° on both axes, information is permanently lost. Furthermore, yaw rotation (α angle) is consistently harder to restore than pitch rotation (β angle).
-- **PSNR is a Reliable Proxy for OCR Accuracy:** PSNR demonstrates a strong linear correlation (R^2~0.98) with final OCR accuracy, making it a robust metric for guiding the training process.
-<img width="1218" height="525" alt="image" src="https://github.com/user-attachments/assets/d9e11cfe-ffb5-4487-bdaf-3a9e083d95b4" />
+## Results
+- **Model evaluation** - Using plate-level OCR accuracy, Restormer achieved the best performance across the full angle grid, showing the highest and most stable recognition rates. In contrast, Diffusion-SR3 delivered the weakest results, with significantly lower OCR accuracy and less consistent restoration quality.
+
+  <img width="2919" height="620" alt="image" src="https://github.com/user-attachments/assets/13faabc0-edec-401a-b80c-22f097df386f" />
+
+
+- **Maximal recoverability boundary and rotation difficulty** - The recoverability boundary was defined by mapping all license plates with OCR accuracy above 90%. For each α, we took the maximal β, and for each β, we took the maximal α; the union of these limits defined the boundary for each model. Combining all model boundaries gave a maximal recoverability region covering ~93% of the angle space. From the same graph, it is clear that no restoration is possible when both α and β exceed 80°, and that extreme yaw (α) rotations are harder to recover than extreme pitch (β) rotations.
+  
+  <img width="1828" height="1000" alt="image" src="https://github.com/user-attachments/assets/f8358341-d430-4973-86d0-c948a838cebe" />
+
+- **Reliability (F-score)** – Within the recoverability boundary, F-scores revealed “holes” where models failed to reconstruct despite meeting the angle limits. Discriminative models showed fewer failures, while generative models had more.
+  
+  <img width="598" height="392" alt="image" src="https://github.com/user-attachments/assets/d534e595-7a93-4739-a7f5-506d329a6fd3" />
+
+
+
+- **PSNR–OCR correlation** – Across all models, PSNR and OCR accuracy were strongly correlated (R² ≈ 0.98), confirming PSNR as a reliable metric for guiding training and evaluation.
+
 
 
 ## Getting Started
