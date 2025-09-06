@@ -24,7 +24,7 @@ We created a custom probability density function (PDF) with emphasis on extreme 
 ## Models Investigated
 We evaluated five distinct architectures representing several leading deep learning paradigms (CNNs, Transformers, GANs, and Diffusion Models) for image restoration.
 
-| **Category** | **Model**    | **Key Adaptations for This Project** |**Orignal paper**|
+| **Category** | **Model**    | **Key Adaptations for This Project** |**Original paper**|
 | :-------- | :------- | :-------------------------------- |:-------------------------------- |
 | Discriminative      | U-Net | Adapted from its original segmentation purpose for image-to-image regression. We modified it to handle 3-channel RGB images and incorporated batch normalization for stable training.| [U-Net](https://arxiv.org/abs/1505.04597)|
 |  | U-Net Conditional| Extends the U-Net with FiLM (Feature-wise Linear Modulation) layers. A separate encoder processes the distorted input into a latent vector, which FiLM then uses to generate adaptive channel-wise scale and shift parameters at each stage of the network. This allows the model to dynamically adjust its features to suppress artifacts specific to each image. |[FiLM](https://arxiv.org/abs/1709.07871)|
@@ -116,7 +116,7 @@ bush
   # Example: Training Restormer on Dataset B
     python src/train_restormer.py --data-dir data/B --experiment-name "LPR_B" 
 ```
-- **Data loading:** The custom LicensePlateDataset class reads all image pairs into memory once and applies any necessary transforms (tensor conversion, normalization). PyTorch DataLoaders turn the dataset class into an iterable over batches, shuffle batches (only for training set), and deliver them to the model in the training loop.
+- **Data loading:** The custom LicensePlateDataset class reads all image pairs into memory once and applies any necessary transforms (tensor conversion, normalization). PyTorch DataLoaders turn the dataset class into an iterable over batches, shuffle batches (only for the training set), and deliver them to the model in the training loop.
 - **Model setup:** The selected model is moved to the GPU. The script defines a loss (e.g., MSE) and an optimizer (e.g., AdamW). It defines a learning rate scheduler (e.g., CosineAnnealingLR). A fixed seed fixes data order and weight initialization.
 - **Training loop:** For U-Net and GANs, each epoch shuffles batches, runs forward pass, computes loss, back-propagates, updates weights, then runs a no-gradient validation pass. Diffusion follows the same cycle, but first adds noise to each input and predicts that noise across scheduled timesteps. After validation, the script logs loss, MSE, SSIM, and PSNR to MLflow and keeps the model state with the best validation SSIM.
 - **Post-training:** After the final epoch or step, the best model weights are loaded. Evaluated on the unseen test set. Test MSE, SSIM, and PSNR are logged. The trained model is logged with an environment file for dependencies.
@@ -133,7 +133,7 @@ bush
     python scripts/run_inference.py --experiment-name "LPR_B" --models "unet_base,unet_conditional,restormer,pix2pix,diffusion_sr3" --steps 1000 --batch-size 16
 ```
 The *run_inference.py* script loads trained models from MLflow and applies them to the data/full_grid/ set. It loads each model under the chosen dataset name, moves the model to the GPU, and enables evaluation mode. For U-Net, U-Net Conditional, Restormer, and Pix2Pix, 
-each distorted image is fed through the network, and the restored output is saved in results/{dataset}/{model}/. For the diffusion model, it performs the scheduled denoising loop before saving the image. The script measures the average inference time per 
+each distorted image is fed through the network, and the restored output is saved in results/{dataset}/{model}/. The diffusion model performs the scheduled denoising loop before saving the image. The script measures the average inference time per 
 image and writes it to inference_times.csv. Command line flags control parameters such as model names, batch size, and diffusion sampling steps.
 
 **Step 4. Full-Scale Evaluation** - Metrics
