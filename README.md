@@ -1,5 +1,5 @@
 
-# Generative Image Models for Enhancing License Plate Images Captured at Extreme Viewing Angles
+# Deep-Learning Restoration of License Plates from Extreme Viewing Angles: A Study on Recoverability Boundaries
 
 ## Overview
 License plate (LP) images from non-dedicated cameras (e.g., security, ATM) often suffer from extreme geometric distortion and noise, rendering them unreadable and, beyond a certain point, irrecoverable. This project pinpoints the critical threshold where this information is permanently lost. To achieve this, we developed an end-to-end framework to synthetically generate distorted data and benchmark a diverse set of deep learning models (discriminative and generative). The result is a clear 'recoverability boundary' that defines the maximum viewing angles for successful image restoration.
@@ -12,13 +12,16 @@ The pipeline generates clean license plate images, applies 3D perspective warpin
 <img width="953" height="110" alt="image" src="https://github.com/user-attachments/assets/cce3f683-348b-4ed2-b3d6-1ce0f4f041e5" />
 
 
-## Advanced Angle Sampling
+## Angle Sampling
 
 We created a custom probability density function (PDF) with emphasis on extreme angles and applied a 3D Sobol sequence to generate evenly distributed samples. The Sobol cube was divided into four regions and then mapped to the angle space according to the PDF.
 
 
+<img width="615" height="511" alt="image" src="https://github.com/user-attachments/assets/476bd066-991b-4f94-a826-168977f8f073" />
 
-<img width="2902" height="814" alt="image" src="https://github.com/user-attachments/assets/3b2407ec-5d24-4ff5-9fd0-b464a24ff991" />
+<img width="793" height="790" alt="image" src="https://github.com/user-attachments/assets/26fb5b05-ba43-4500-9154-54d91196a86f" />
+
+
 
 
 ## Models Investigated
@@ -40,7 +43,7 @@ We evaluated five distinct architectures representing several leading deep learn
   <img width="2919" height="620" alt="image" src="https://github.com/user-attachments/assets/13faabc0-edec-401a-b80c-22f097df386f" />
 
 
-- **Maximal recoverability boundary and rotation difficulty** - The recoverability boundary was defined by mapping all license plates with OCR accuracy above 90%. For each α, we took the maximal β, and for each β, we took the maximal α; the union of these limits defined the boundary for each model. Combining all model boundaries gave a maximal recoverability region covering ~93% of the angle space. From the same graph, it is clear that no restoration is possible when both α and β exceed 80°, and that extreme yaw (α) rotations are harder to recover than extreme pitch (β) rotations.
+- **Maximal recoverability boundary and rotation difficulty** - The recoverability boundary was defined by mapping all license plates with OCR accuracy above 90%. For each α, we took the maximal β, and for each β, we took the maximal α; the union of these limits defined the boundary for each model. Combining all model boundaries gave a maximal recoverability region covering ~93% of the angle space. No restoration is possible when both α and β exceed 80°, and extreme yaw (α) rotations are harder to recover than extreme pitch (β) rotations.
   
   <img width="1828" height="1000" alt="image" src="https://github.com/user-attachments/assets/f8358341-d430-4973-86d0-c948a838cebe" />
 
